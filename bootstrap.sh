@@ -28,9 +28,40 @@ cd $HADOOP_PREFIX/share/hadoop/common ; for cp in ${ACP//,/ }; do  echo == $cp; 
 
 service sshd start
 
-$HADOOP_PREFIX/sbin/start-all.sh
+$HADOOP_PREFIX/sbin/start-dfs.sh
+
+$HADOOP_PREFIX/sbin/start-yarn.sh
 
 $SPARK_HOME/sbin/start-all.sh
+
+#start slave instance on this docker instance:
+
+if [ -z "${SPARK_HOME}" ]; then
+  export SPARK_HOME="$(cd "`dirname "$0"`"/..; pwd)"
+fi
+
+. "${SPARK_HOME}/sbin/spark-config.sh"
+. "${SPARK_HOME}/bin/load-spark-env.sh"
+
+# Find the port number for the master
+if [ "$SPARK_MASTER_PORT" = "" ]; then
+  SPARK_MASTER_PORT=7077
+fi
+
+if [ "$SPARK_MASTER_HOST" = "" ]; then
+  case `uname` in
+      (SunOS)
+          SPARK_MASTER_HOST="`/usr/sbin/check-hostname | awk '{print $NF}'`"
+          ;;
+      (*)
+          SPARK_MASTER_HOST="`hostname -f`"
+          ;;
+  esac
+fi
+
+# Launch the slave locally
+"${SPARK_HOME}/sbin/start-slave.sh" "spark://$SPARK_MASTER_HOST:$SPARK_MASTER_PORT"
+
 
 if [[ $1 = "-d" || $2 = "-d" ]]; then
   while true; do sleep 1000; done

@@ -19,7 +19,8 @@
 #
 
 FROM centos:7
-MAINTAINER Luciano Resende lresende@apache.org
+LABEL author "Konrad Lang"
+LABEL maintainer "Konrad Lang klang@know-center.at"
 
 USER root
 
@@ -32,10 +33,8 @@ RUN yum clean all
 # install dev tools
 RUN yum install -y curl which tar sudo openssh-server openssh-clients rsync | true && \
     yum update -y libselinux | true && \
-
     # update root password
     echo 'root:passw0rd' | chpasswd && \
-
     # passwordless ssh
     ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key && \
     ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key && \
@@ -52,10 +51,15 @@ RUN chmod 600 /root/.ssh/config && \
     
 #####################
 # java
+# problem with license accept, using v131 
+# see Stackoverflow: https://stackoverflow.com/questions/10268583/downloading-java-jdk-on-linux-via-wget-is-shown-license-page-instead#10959815
+RUN curl -v -j -k -L -H "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64.rpm" > "jdk-8u131-linux-x64.rpm"
+RUN rpm -i jdk-8u131-linux-x64.rpm
+RUN rm jdk-8u131-linux-x64.rpm
 
-RUN curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.rpm' -H 'Cookie: oraclelicense=accept-securebackup-cookie' && \
-    rpm -i jdk-8u144-linux-x64.rpm && \
-    rm jdk-8u144-linux-x64.rpm
+#RUN curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.rpm' -H 'Cookie: oraclelicense=accept-securebackup-cookie' && \
+#    rpm -i jdk-8u144-linux-x64.rpm && \
+#    rm jdk-8u144-linux-x64.rpm
 
 ENV JAVA_HOME /usr/java/default
 ENV PATH $PATH:$JAVA_HOME/bin

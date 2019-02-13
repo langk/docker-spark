@@ -18,18 +18,20 @@
 platform='unknown'
 unamestr=`uname`
 if [[ "$unamestr" == 'Linux' ]]; then
-   platform='linux'
+  platform='linux'
 elif [[ "$unamestr" == 'FreeBSD' ]]; then
-   platform='freebsd'
- elif [[ "$unamestr" == 'Darwin' ]]; then
-    platform='osx'   
+  platform='freebsd'
+elif [[ "$unamestr" == 'Darwin' ]]; then
+  platform='osx'
+elif [[ "$unamestr" == 'MINGW64_NT-10.0' ]]; then
+  platform='osx'
 fi
 
 ## build docker image
 if [[ $platform == 'osx' ]]; then
-  docker rmi -f lresende/spark:2.2.0
-  docker build --force-rm=true --rm --no-cache -t lresende/spark:2.2.0 .
+  docker rmi -f kcklang/spark:1.0.0
+  docker build --force-rm=true --rm --no-cache -t kcklang/spark:1.0.0 .
 else
-  sudo docker rmi -f lresende/spark
-  sudo docker build --force-rm --rm --no-cache -t lresende/spark:2.2.0 .
+  sudo docker rmi -f kcklang/spark:1.0.0
+  sudo docker build --force-rm --rm --no-cache -t kcklang/spark:1.0.0 .
 fi

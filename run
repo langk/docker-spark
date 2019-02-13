@@ -21,19 +21,21 @@ if [[ "$unamestr" == 'Linux' ]]; then
    platform='linux'
 elif [[ "$unamestr" == 'FreeBSD' ]]; then
    platform='freebsd'
- elif [[ "$unamestr" == 'Darwin' ]]; then
+elif [[ "$unamestr" == 'Darwin' ]]; then
+    platform='osx' 
+elif [[ "$unamestr" == 'MINGW64_NT-10.0' ]]; then
     platform='osx'   
 fi
 
 if [[ $platform == 'osx' ]]; then
   docker rm -f spark
-  docker run -d --name spark -p 7077:7077 -p 8080:8080  -p 8085:8085 -p 8086:8086 -p 8087:8087 -p 8088:8088 -p 50070:50070 -p 6500:6500 -p 6501:6501 -p 6502:6502 -p 18080:18080 lresende/spark:2.2.0
+  docker run -d --name spark -p 7077:7077 -p 8080:8080  -p 8085:8085 -p 8086:8086 -p 8087:8087 -p 8088:8088 -p 50070:50070 -p 6500:6500 -p 6501:6501 -p 6502:6502 -p 18080:18080 kcklang/spark:1.0.0
   
   DOCKER_IP="$(docker exec spark /bin/hostname -i)"
   VM_IP="$(docker-machine ip default)"
 else
   sudo docker rm -f spark
-  sudo docker run -d --name spark -p 7077:7077 -p 8080:8080  -p 8085:8085 -p 8086:8086 -p 8087:8087 -p 8088:8088 -p 50070:50070 -p 6500:6500 -p 6501:6501 -p 6502:6502 -p 18080:18080 lresende/spark:2.2.0
+  sudo docker run -d --name spark -p 7077:7077 -p 8080:8080  -p 8085:8085 -p 8086:8086 -p 8087:8087 -p 8088:8088 -p 50070:50070 -p 6500:6500 -p 6501:6501 -p 6502:6502 -p 18080:18080 kcklang/spark:1.0.0
 
   DOCKER_IP="$(sudo docker exec spark /bin/hostname -i)"
   VM_IP="$(docker-machine ip default)"
